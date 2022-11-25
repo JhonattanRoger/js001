@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./assets/style.css">
+    <title>Jogo de Adivinhação</title>
+</head>
+<body>
+    <h1>Adivinhe o Número</h1>
+
+    <p>Eu escolhi um número de 1 a 100. Tente adivinhar o número em 10 chances ou menos. Irei te dizer se o seu palpite está perto ou longe</p>
+
+    <div class="form">
+        <label for="text">Digite seu palpite:</label>
+        <input type="number" min="1" max="100" required id="campoTentativa" class="campoTentativa">
+        <input type="submit" value="Adivinhar" class="botaoAdivinhar">
+    </div>
+
+    <div class="resultado">
+        <p class="tentativas"></p>
+        <p class="ultimoResultado"></p>
+        <p class="baixoOuAlto"></p>
+    </div>
+
+    <script>
+        let numeroAleatorio = Math.floor(Math.random() * 100) + 1;
+
+        const tentativas = document.querySelector('.tentativas');
+        const ultimoResultado = document.querySelector('.ultimaTentativa');
+        const baixoOuAlto = document.querySelector('.baixouOuAlto');
+
+        const botaoAdivinhar = document.querySelector('.botaoAdivinhar');
+        const campoTentativa = document.querySelector('.campoTentativa');
+
+        let numeroTentativas = 1;
+        let botaoResetar;
+
+        function verificarPalpite() {
+            const tentativaUsuario = Number(campoTentativa.value);
+            if (numeroTentativas === 1) {
+                tentativas.textContent = 'Tentativas anteriores'
+            }
+            tentativas.textContent += `${tentativaUsuario}`;
+
+            if (tentativaUsuario === numeroAleatorio) {
+                ultimoResultado.textContent = 'Parabéns! Você acertou!';
+                ultimoResultado.style.backgroundoColor = 'green';
+                baixoOuAlto.textContent = '';
+                setFimDeJogo();
+            } else if (tentativaUsuario === 10) {
+                ultimoResultado.textContent = 'GAME OVER!';
+                baixoOuAlto.textContent = '';
+                setFimDeJogo();
+            } else {
+                ultimoResultado.textContent = 'Errado!';
+                ultimoResultado.style.backgroundoColor = 'red';
+                if (tentativaUsuario < numeroAleatorio) {
+                    baixoOuAlto.textContent = 'Tente um número mais alto!';
+                }
+                if (tentativaUsuario > numeroAleatorio) {
+                    baixoOuAlto.textContent = 'Tente um número mais baixo!';
+                }
+            }
+            tentativaUsuario++;
+            campoTentativa.value = '';
+            campoTentativa.focus();
+        }
+
+        botaoAdivinhar.addEventListener('click', verificarPalpite);
+        
+    </script>
+</body>
+</html>
