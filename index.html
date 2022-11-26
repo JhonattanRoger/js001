@@ -8,67 +8,107 @@
     <title>Jogo de Adivinhação</title>
 </head>
 <body>
-    <h1>Adivinhe o Número</h1>
+    <div id="container">
+        <div class="teste">
+            <h1>Adivinhe o Número</h1>
 
-    <p>Eu escolhi um número de 1 a 100. Tente adivinhar o número em 10 chances ou menos. Irei te dizer se o seu palpite está perto ou longe</p>
+            <p>Eu escolhi um número de 1 a 100. Tente adivinhar o número em 10 chances ou menos. Irei te dizer se o seu palpite está perto ou longe.</p>
 
-    <div class="form">
-        <label for="text">Digite seu palpite:</label>
-        <input type="number" min="1" max="100" required id="campoTentativa" class="campoTentativa">
-        <input type="submit" value="Adivinhar" class="botaoAdivinhar">
-    </div>
+            <div class="palpite">
+                <label for="text">Seu palpite:</label>
+                <input type="number" min="1" max="100" required id="guessField" class="guessField">                
+            </div>
+            <input type="submit" value="Adivinhar" class="guessSubmit">
 
-    <div class="resultado">
-        <p class="tentativas"></p>
-        <p class="ultimoResultado"></p>
-        <p class="baixoOuAlto"></p>
+            <div class="resultParas">
+                <p class="guesses"></p>
+                <p class="lastResult"></p>
+                <p class="lowOrHi"></p>
+            </div>
+            <!-- Colocar o botão pra resetar -->
+            <div id="showButton" class="showButton"></div>
+        </div>
     </div>
 
     <script>
-        let numeroAleatorio = Math.floor(Math.random() * 100) + 1;
+        let randomNumber = Math.floor(Math.random() * 100) + 1;
 
-        const tentativas = document.querySelector('.tentativas');
-        const ultimoResultado = document.querySelector('.ultimaTentativa');
-        const baixoOuAlto = document.querySelector('.baixouOuAlto');
+        const guesses = document.querySelector('.guesses');
+        const lastResult = document.querySelector('.lastResult');
+        const lowOrHi = document.querySelector('.lowOrHi');
 
-        const botaoAdivinhar = document.querySelector('.botaoAdivinhar');
-        const campoTentativa = document.querySelector('.campoTentativa');
+        const guessSubmit = document.querySelector('.guessSubmit');
+        const guessField = document.querySelector('.guessField');
 
-        let numeroTentativas = 1;
-        let botaoResetar;
+        let guessCount = 1;
+        let resetButton;
 
-        function verificarPalpite() {
-            const tentativaUsuario = Number(campoTentativa.value);
-            if (numeroTentativas === 1) {
-                tentativas.textContent = 'Tentativas anteriores'
+        function checkGuess() {
+            const userGuess = Number(guessField.value);
+            if (guessCount === 1) {
+                guesses.textContent = 'Palpites anteriores: '
             }
-            tentativas.textContent += `${tentativaUsuario}`;
+            guesses.textContent += `${userGuess},  `;
 
-            if (tentativaUsuario === numeroAleatorio) {
-                ultimoResultado.textContent = 'Parabéns! Você acertou!';
-                ultimoResultado.style.backgroundoColor = 'green';
-                baixoOuAlto.textContent = '';
-                setFimDeJogo();
-            } else if (tentativaUsuario === 10) {
-                ultimoResultado.textContent = 'GAME OVER!';
-                baixoOuAlto.textContent = '';
-                setFimDeJogo();
+            if (userGuess === randomNumber) {
+                lastResult.textContent = 'Parabéns! Você acertou!';
+                lastResult.style.backgroundColor = 'green';                
+                lowOrHi.textContent = '';
+                setGameOver();
+            } else if (guessCount === 10) {
+                lastResult.textContent = 'GAME OVER!';
+                lowOrHi.textContent = '';
+                setGameOver();
             } else {
-                ultimoResultado.textContent = 'Errado!';
-                ultimoResultado.style.backgroundoColor = 'red';
-                if (tentativaUsuario < numeroAleatorio) {
-                    baixoOuAlto.textContent = 'Tente um número mais alto!';
+                lastResult.textContent = 'Errado!';
+                lastResult.style.backgroundColor = 'red';
+                if (userGuess < randomNumber) {
+                    lowOrHi.textContent = 'Tente um número mais alto!';
                 }
-                if (tentativaUsuario > numeroAleatorio) {
-                    baixoOuAlto.textContent = 'Tente um número mais baixo!';
+                if (userGuess > randomNumber) {
+                    lowOrHi.textContent = 'Tente um número mais baixo!';
                 }
             }
-            tentativaUsuario++;
-            campoTentativa.value = '';
-            campoTentativa.focus();
+
+            guessCount++;
+            guessField.value = '';
+            guessField.focus();
         }
 
-        botaoAdivinhar.addEventListener('click', verificarPalpite);
+        guessSubmit.addEventListener('click', checkGuess);
+
+        function setGameOver() {
+            guessField.disabled = true;
+            guessSubmit.disabled = true;
+            showButton = document.getElementById("showButton");
+            resetButton = document.createElement('button');
+            resetButton.textContent = 'Start new game';
+            resetButton.style.backgroundColor
+            showButton.append(resetButton);            
+            resetButton.addEventListener('click', resetGame);
+        }
+
+        function resetGame() {
+            guessCount = 1;            
+
+            const resetParas = document.querySelectorAll('.resultParas p');
+                for (const resetPara of resetParas) {
+                    resetPara.textContent = '';
+                }
+
+            resetButton.parentNode.removeChild(resetButton);
+
+            guessField.disabled = false;
+            guessSubmit.disabled = false;
+            guessField.value = '';
+            guessField.focus();
+
+            lastResult.style.backgroundColor = 'pink';            
+
+            randomNumber = Math.floor(Math.random() * 100) + 1;
+        }
+
+
         
     </script>
 </body>
